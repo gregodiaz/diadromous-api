@@ -1,0 +1,10 @@
+GET {{APP_URL}}/api/v1/travels
+Accept: application/json
+
+GET {{APP_URL}}/api/v1/travels/43
+Accept: application/json
+
+POST {{APP_URL}}/api/v1/travels
+content-type: application/json
+{
+}
