@@ -15,7 +15,9 @@ class TravelController extends Controller
      */
     public function index()
     {
-        return Travel::all();
+        $travels = Travel::all();
+
+        return response()->json(compact('travels'));
     }
 
     /**
@@ -26,7 +28,9 @@ class TravelController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $new_travel = Travel::create($request->all());
+
+        return response()->json(compact('new_travel'));
     }
 
     /**
@@ -37,7 +41,7 @@ class TravelController extends Controller
      */
     public function show(Travel $travel)
     {
-        return $travel;
+        return response()->json(compact('travel'));
     }
 
     /**
@@ -49,7 +53,9 @@ class TravelController extends Controller
      */
     public function update(Request $request, Travel $travel)
     {
-        //
+        $travel->update($request->all());
+
+        return response()->json(compact('travel'));
     }
 
     /**
@@ -60,6 +66,8 @@ class TravelController extends Controller
      */
     public function destroy(Travel $travel)
     {
-        //
+        $travel->delete();
+
+        return response()->json(compact('travel'));
     }
 }

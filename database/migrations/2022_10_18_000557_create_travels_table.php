@@ -23,8 +23,10 @@ return new class extends Migration
             $table->string('arrival_place');
             $table->unsignedInteger('total_passengers');
             $table->unsignedInteger('available_passengers');
-            $table->boolean('done');
+            $table->boolean('done')->default(false);
+            $table->dateTime('cancelled_at')->default(null)->nullable();
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

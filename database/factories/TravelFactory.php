@@ -24,7 +24,6 @@ class TravelFactory extends Factory
             'arrival_place' => fake()->city,
             'total_passengers' => $total_passengers = intval($price / rand(100, 200)),
             'available_passengers' => $total_passengers,
-            'done' => false,
         ];
     }
 }
