@@ -1,0 +1,38 @@
+GET {{APP_URL}}/api/v1/travels
+Accept: application/json
+
+GET {{APP_URL}}/api/v1/travels/50
+Accept: application/json
+
+POST {{APP_URL}}/api/v1/travels
+Accept: application/json
+Content-Type: application/json
+
+{
+  "price" : "1333.3",
+  "departure_time" : "2022-10-23 19:46:08",
+  "arrival_time" : "2022-10-30 21:11:16",
+  "departure_place" : "Kelliehaven",
+  "arrival_place" : "Port Kimberly",
+  "total_passengers" : 40,
+  "available_passengers" : 40,
+  "done" : false
+}
+
+PATCH {{APP_URL}}/api/v1/travels/54
+Accept: application/json
+Content-Type: application/json
+
+{
+  "price" : "1694.3",
+  "departure_time" : "2022-10-23 19:46:08",
+  "arrival_time" : "2022-10-30 21:11:16",
+  "departure_place" : "Kelliehaven",
+  "arrival_place" : "Port Kimberly",
+  "total_passengers" : 69,
+  "available_passengers" : 43,
+  "done" : false
+}
+
+DELETE {{APP_URL}}/api/v1/travels/54
+Accept: application/json
