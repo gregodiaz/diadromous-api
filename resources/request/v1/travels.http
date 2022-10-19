@@ -1,9 +1,6 @@
 GET {{APP_URL}}/api/v1/travels
 Accept: application/json
 
-GET {{APP_URL}}/api/v1/travels/50
-Accept: application/json
-
 POST {{APP_URL}}/api/v1/travels
 Accept: application/json
 Content-Type: application/json
@@ -18,6 +15,9 @@ Content-Type: application/json
   "available_passengers" : 40,
   "done" : false
 }
+
+GET {{APP_URL}}/api/v1/travels/20
+Accept: application/json
 
 PATCH {{APP_URL}}/api/v1/travels/54
 Accept: application/json
