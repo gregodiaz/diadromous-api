@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
 
-            $table->float('price');
+            $table->unsignedInteger('seat_number');
             $table->unsignedBigInteger('travel_id');
             $table->unsignedBigInteger('user_id')->default(null)->nullable();
             $table->dateTime('cancelled_at')->default(null)->nullable();
@@ -24,7 +24,6 @@ return new class extends Migration
             $table->foreign('travel_id')->references('id')->on('travels');
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->softDeletes();
             $table->timestamps();
         });
     }

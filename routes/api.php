@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\TravelController as TravelV1;
+use App\Http\Controllers\Api\V1\TicketController as TicketV1;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('v1/travels', TravelV1::class);
+
+Route::apiResource('v1/travels.tickets', TicketV1::class)->except('destroy');
