@@ -1,9 +1,11 @@
 GET {{APP_URL}}/api/v1/travels
 Accept: application/json
+Authorization: Bearer 35|THZTEL1YcGESJ08Ksjah8EBkv4DelGITxz1oEBef
 
 POST {{APP_URL}}/api/v1/travels
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer 35|THZTEL1YcGESJ08Ksjah8EBkv4DelGITxz1oEBef
 
 {
   "price" : "1333.3",
