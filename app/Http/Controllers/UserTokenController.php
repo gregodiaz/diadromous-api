@@ -3,36 +3,45 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\AuthRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class UserTokenController extends Controller
 {
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
 
-    public function __invoke(Request $request)
+    public function createUser(AuthRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $valid_data = $request->validated();
 
         /**
          * @var User $user
          * */
-        $user = User::where('email', $request->get('email'))->first();
+        $user = User::create([
+            'name' => $valid_data['name'],
+            'email' => $valid_data['email'],
+            'password' => Hash::make($valid_data['password']),
+        ]);
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        $token = $user->createToken($valid_data['name'])->plainTextToken;
+
+        return response()->json(compact('token'));
+    }
+
+    public function loginUser(AuthRequest $request)
+    {
+        $valid_data = $request->validated();
+
+        /**
+         * @var User $user
+         * */
+        $user = User::where('email', $valid_data['email'])->first();
+
+        if (!$user || !Hash::check($valid_data['password'], $user->password)) {
             throw ValidationException::withMessages(['email' => 'The provided credentials are incorrect.']);
         }
 
-        $token = $user->createToken($request->name)->plainTextToken;
+        $token = $user->createToken($valid_data['name'])->plainTextToken;
 
         return response()->json(compact('token'));
     }

@@ -1,25 +1,29 @@
 # GET all tickets from {travel}
 GET {{APP_URL}}/api/v1/travels/1/tickets
 Accept: application/json
+Authorization: Bearer {{SANCTUM_TOKEN}}
 
 # create ticket for {travel}
-POST {{APP_URL}}/api/v1/travels/1/tickets
+POST {{APP_URL}}/api/v1/travels/2/tickets
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{SANCTUM_TOKEN}}
 
 {
-    "user_id": 1,
+    "user_id": 11,
     "cancelled_at": null
 }
 
 # GET show {ticket} from {travel}
-GET {{APP_URL}}/api/v1/travels/11/tickets/5
+GET {{APP_URL}}/api/v1/travels/1/tickets/14
 Accept: application/json
+Authorization: Bearer {{SANCTUM_TOKEN}}
 
 # edit {ticket} from {travel}
 PATCH {{APP_URL}}/api/v1/travels/11/tickets/5
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{SANCTUM_TOKEN}}
 
 {
     "user_id": 6,
