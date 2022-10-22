@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('register', [UserTokenController::class, 'createUser']);
-Route::post('login', [UserTokenController::class, 'loginUser']);
+Route::controller(UserTokenController::class)->group(function () {
+    Route::post('register', 'createUser');
+    Route::post('login', 'loginUser');
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -26,5 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('v1/travels', TravelV1::class);
-    Route::apiResource('v1/travels.tickets', TicketV1::class)->except('destroy');
+
+    Route::apiResource('v1/travels.tickets', TicketV1::class)->except('update');
+    Route::controller(TicketV1::class)->group(function () {
+        Route::get('/v1/tickets', 'all');
+    });
 });
