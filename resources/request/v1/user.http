@@ -1,3 +1,25 @@
+# GET user
 GET {{APP_URL}}/api/user
 Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{SANCTUM_TOKEN}}
 
+POST {{APP_URL}}/api/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name" : "greg",
+  "email" : "greg@developer.org",
+  "password" : "password"
+}
+
+POST {{APP_URL}}/api/register
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name" : "greg",
+  "email" : "greg@developer.org",
+  "password" : "password"
+}
