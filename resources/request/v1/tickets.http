@@ -1,4 +1,3 @@
-# GET all tickets
 GET {{APP_URL}}/api/v1/tickets
 Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
