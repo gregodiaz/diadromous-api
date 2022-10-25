@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 
 class ForecastApi
 {
-    private function requestToApi(float $latitude, float $longitude)
+    public function __invoke(float $latitude, float $longitude)
     {
         $api_response = Http::forecast()->get(
             '/',
@@ -16,7 +16,6 @@ class ForecastApi
                 "timezone" => "auto",
                 "current_weather" => true,
                 "daily" => [
-                    "weathercode",
                     "temperature_2m_max",
                     "precipitation_sum",
                     "windspeed_10m_max",
@@ -25,8 +24,7 @@ class ForecastApi
             ]
         );
 
-        $data = json_decode($api_response, true);
-
-        return $data;
+        return json_decode($api_response, true);
     }
 }
+
