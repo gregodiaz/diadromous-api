@@ -22,12 +22,12 @@ Route::controller(UserTokenController::class)->group(function () {
     Route::post('login', 'loginUser');
 });
 
+Route::get('/v1/fo', [\App\Services\ForecastApi::class, 'authorizeTravel']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
-    Route::apiResource('v1/travels', TravelV1::class);
 
     Route::apiResource('v1/travels.tickets', TicketV1::class)->except('update');
     Route::controller(TicketV1::class)->group(function () {
