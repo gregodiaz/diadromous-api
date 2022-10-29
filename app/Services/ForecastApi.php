@@ -2,11 +2,19 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class ForecastApi
 {
-    public function __invoke(float $latitude, float $longitude)
+    /**
+     * Make request to forecast api
+     *
+     * @param float $latitude    
+     * @param float $longitude    
+     * @return Collection $api_response    
+     */
+    public function makeRequest(float $latitude, float $longitude): Collection
     {
         $api_response = Http::forecast()->get(
             '/',
@@ -15,16 +23,21 @@ class ForecastApi
                 "longitude" => $longitude,
                 "timezone" => "auto",
                 "current_weather" => true,
+                "hourly" => [
+                    "precipitation",
+                    "temperature_2m",
+                    "windgusts_10m",
+                    "windspeed_10m",
+                ],
                 "daily" => [
-                    "temperature_2m_max",
                     "precipitation_sum",
-                    "windspeed_10m_max",
+                    "temperature_2m_max",
                     "windgusts_10m_max",
+                    "windspeed_10m_max",
                 ],
             ]
-        );
+        )->collect();
 
-        return json_decode($api_response, true);
+        return $api_response;
     }
 }
-

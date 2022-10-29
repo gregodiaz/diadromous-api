@@ -7,23 +7,36 @@ use Illuminate\Support\Facades\Validator;
 
 class ValidateTravel
 {
+    public function __construct(
+        private ForecastApi $forecast,
+    ) {
+    }
+
     private const RULES = [
-        "temperature_2m_max" => "numeric|between:3,30",
-        "precipitation_sum" => "numeric|between:0,30",
-        "windspeed_10m_max" => "numeric|between:5,30",
-        "windgusts_10m_max" => "numeric|between:5,40",
+        "precipitation" => "numeric|max:40",
+        "temperature_2m" => "numeric|between:0,40",
+        "windgusts_10m" => "numeric|max:40",
+        "windspeed_10m" => "numeric|max:30",
     ];
 
-    public function __invoke(float $latitude, float $longitude, $forecast = new ForecastApi)
+    /**
+     * Validates the travel according to forecast of the day with the rules
+     *
+     * @param float $latitude    
+     * @param float $longitude    
+     * @return bool $validated    
+     */
+    public function validate(float $latitude, float $longitude): bool
     {
-        $travels_forecast = $forecast($latitude, $longitude)['daily'];
+        $full_forecast = $this->forecast->makeRequest($latitude, $longitude)->get("hourly");
+        $hourly_forecast = collect($full_forecast)->except("time");
 
-        foreach ($travels_forecast as $key => $number) {
-            $travels_forecast[$key] = array_sum($number) / count($number);
-        };
+        $averages_forecast = $hourly_forecast->map(function ($value) {
+            return collect($value)->chunk(24)->first()->avg();
+        });
 
-        $validated = !Validator::make($travels_forecast, self::RULES)->stopOnFirstFailure()->fails();
+        $validated = !Validator::make($averages_forecast->all(), self::RULES)->stopOnFirstFailure()->fails();
 
-        return response()->json(compact('travels_forecast', 'validated'));
+        return $validated;
     }
 }
