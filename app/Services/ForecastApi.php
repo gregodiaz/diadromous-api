@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
@@ -14,8 +15,14 @@ class ForecastApi
      * @param float $longitude    
      * @return Collection $api_response    
      */
-    public function makeRequest(float $latitude, float $longitude): Collection
+    public function makeRequest(float $latitude, float $longitude, Carbon $departure_date): Collection
     {
+        $today = Carbon::now();
+        $end_date =
+            $departure_date->isPast() || $departure_date->diffInDays($today) > 7
+            ? $today->addWeek()
+            : $departure_date;
+
         $api_response = Http::forecast()->get(
             '/',
             [
@@ -35,6 +42,8 @@ class ForecastApi
                     "windgusts_10m_max",
                     "windspeed_10m_max",
                 ],
+                "start_date" => $today->format('o-m-d'),
+                "end_date" => $end_date->format('o-m-d'),
             ]
         )->collect();
 

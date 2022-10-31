@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Services\ForecastApi;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class OddsOfCancelling
@@ -23,12 +24,13 @@ class OddsOfCancelling
      * Create and array with the weighteds odds of cancelling based on max forecasts variables a week from now
      *
      * @param float $latitude    
-     * @param float $longitude    
+     * @param float $longitude      
+     * @param Carbon $departure_date
      * @return Collection $cancelation_percentages In form [DateTime => float] a week from now
      */
-    public function calculate(float $latitude, float $longitude): Collection
+    public function calculate(float $latitude, float $longitude, Carbon $departure_date): Collection
     {
-        $full_forecast = $this->forecast->makeRequest($latitude, $longitude)->get("daily");
+        $full_forecast = $this->forecast->makeRequest($latitude, $longitude, $departure_date)->get("daily");
         $forecast = collect($full_forecast)->except("time");
         $forecast_date = collect($full_forecast)->only("time")->values()->first();
 

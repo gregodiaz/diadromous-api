@@ -31,8 +31,7 @@ class TicketController extends Controller
     {
         $tickets = $travel
             ->ticket
-            ->where('user_id', Auth::id())
-            ->all();
+            ->where('user_id', Auth::id()) ->all();
 
         return response()->json($tickets);
     }
