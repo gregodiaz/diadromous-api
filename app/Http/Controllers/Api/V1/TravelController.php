@@ -53,7 +53,7 @@ class TravelController extends Controller
         // fake a city coordenates
         $lat = floatval(rand(-90, 90));
         $long = floatval(rand(-180, 180));
-        $days = rand(1, 7);
+
         $validated = $this->validator->validate($lat, $long);
         $forecast = $this->percentages->calculate($lat, $long, Carbon::parse($travel->departure_time)->setTimezone('UTC'));
 

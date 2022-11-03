@@ -21,7 +21,7 @@ class OddsOfCancelling
     ];
 
     /**
-     * Create and array with the weighteds odds of cancelling based on max forecasts variables a week from now
+     * Create and array with the weighteds odds of cancelling based on max forecast variables a week from now
      *
      * @param float $latitude    
      * @param float $longitude      
@@ -30,38 +30,34 @@ class OddsOfCancelling
      */
     public function calculate(float $latitude, float $longitude, Carbon $departure_date): Collection
     {
-        $full_forecast = $this->forecast->makeRequest($latitude, $longitude, $departure_date)->get("daily");
-        $forecast = collect($full_forecast)->except("time");
-        $forecast_date = collect($full_forecast)->only("time")->values()->first();
+        $full_forecast = collect($this->forecast->makeRequest($latitude, $longitude, $departure_date)->get("daily"));
 
-        // transform the forecasts values in percentages with calculateOdds
-        $percentages_chunk_by_type = collect($forecast->map(function ($forecast_type, $key) {
-            return collect($forecast_type)->map(function ($value) use ($key) {
-                return calculateOdds($value, self::RULES[$key]);
+        $forecast = $full_forecast->except("time");
+        $forecast_date =  collect($full_forecast->first());
+
+        // transforms the forecast values in odds of cancelling
+        $percentages_chunk_by_type = collect($forecast->map(function ($forecast_values, $forecast_type) {
+            return collect($forecast_values)->map(function ($value) use ($forecast_type) {
+                return calculateOdds($value, self::RULES[$forecast_type]);
             });
         }))->values();
 
-        // get percentages 4 chunks of 7 (by type) and return 7 chunks of 4 (by day)
-        for ($i = 0; $i < $percentages_chunk_by_type->first()->count(); $i++) {
-            $percentages_day = $percentages_chunk_by_type->map(function ($day_percentage) use ($i) {
-                return $day_percentage[$i];
-            });
-            $percentages_chunk_by_day[] = $percentages_day;
-        }
-        $max_percentage_by_day = collect($percentages_chunk_by_day);
+        // transforms 4 chunks of 7 values (by type) in 7 chunks of 4 values (by day)
+        $percentages_chunk_by_day = $percentages_chunk_by_type->flipMatrix();
 
-        // return the max of avery chunk of 4
-        $max_percentages = collect($max_percentage_by_day->map(function ($percentages_day) {
-            return $percentages_day->max();
-        }));
+        // returns the max of avery chunk of 4
+        $max_percentages = $percentages_chunk_by_day->map(function ($percentage_day) {
+            return $percentage_day->max();
+        });
 
-        // return the weighted percentages
-        $weighted_average_percentages = collect($max_percentages->map(function ($max, $key) {
+        // returns the weighted percentages
+        $weighted_average_percentages = $max_percentages->map(function ($max, $key) {
             return intval($max / ((4 / 3) ** (1 + $key)));
-        }));
+        });
 
-        $cancelation_percentages = collect($forecast_date)->combine($weighted_average_percentages);
+        // combines the percentages with their respective dates
+        $cancelation_percentages = $forecast_date->combine($weighted_average_percentages);
 
-        return collect($cancelation_percentages);
+        return $cancelation_percentages;
     }
 }
