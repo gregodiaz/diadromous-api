@@ -4,16 +4,14 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Travel;
-use App\Services\OddsOfCancelling;
-use App\Services\ValidateTravel;
+use App\Services\ManageTravel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class TravelController extends Controller
 {
     public function __construct(
-        private OddsOfCancelling $percentages,
-        private ValidateTravel $validator,
+        private ManageTravel $manage,
     ) {
     }
 
@@ -26,7 +24,7 @@ class TravelController extends Controller
     {
         $travels = Travel::all();
 
-        return response()->json($travels);
+        return $travels;
     }
 
     /**
@@ -39,7 +37,7 @@ class TravelController extends Controller
     {
         $new_travel = Travel::create($request->all());
 
-        return response()->json($new_travel);
+        return $new_travel;
     }
 
     /**
@@ -54,12 +52,11 @@ class TravelController extends Controller
         $lat = floatval(rand(-90, 90));
         $long = floatval(rand(-180, 180));
 
-        $validated = $this->validator->validate($lat, $long);
-        $forecast = $this->percentages->calculate($lat, $long, Carbon::parse($travel->departure_time)->setTimezone('UTC'));
+        $validation = $this->manage->validator($lat, $long, Carbon::parse($travel->departure_time)->setTimezone('UTC'));
 
-        $total = collect($travel)->merge(compact('validated', 'forecast'));
+        $travel_with_validation = collect($travel)->merge(compact('validation'));
 
-        return response()->json($total);
+        return $travel_with_validation;
     }
 
     /**
@@ -73,7 +70,7 @@ class TravelController extends Controller
     {
         $travel->update($request->all());
 
-        return response()->json($travel);
+        return $travel;
     }
 
     /**
@@ -86,6 +83,6 @@ class TravelController extends Controller
     {
         $travel->delete();
 
-        return response()->json($travel);
+        return $travel;
     }
 }
