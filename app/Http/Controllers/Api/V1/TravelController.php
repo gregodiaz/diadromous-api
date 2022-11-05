@@ -4,10 +4,19 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Travel;
+use App\Services\OddsOfCancelling;
+use App\Services\ValidateTravel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class TravelController extends Controller
 {
+    public function __construct(
+        private OddsOfCancelling $percentages,
+        private ValidateTravel $validator,
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -41,7 +50,16 @@ class TravelController extends Controller
      */
     public function show(Travel $travel)
     {
-        return response()->json($travel);
+        // fake a city coordenates
+        $lat = floatval(rand(-90, 90));
+        $long = floatval(rand(-180, 180));
+
+        $validated = $this->validator->validate($lat, $long);
+        $forecast = $this->percentages->calculate($lat, $long, Carbon::parse($travel->departure_time)->setTimezone('UTC'));
+
+        $total = collect($travel)->merge(compact('validated', 'forecast'));
+
+        return response()->json($total);
     }
 
     /**
