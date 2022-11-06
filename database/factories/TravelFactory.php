@@ -18,10 +18,8 @@ class TravelFactory extends Factory
     {
         return [
             'price' => $price = rand(6000, 69999) / 10,
-            'departure_time' => fake()->dateTimeBetween('now', '6 days'),
-            'arrival_time' => fake()->dateTimeBetween('7 days', '14days'),
-            'departure_place' => fake()->city(),
-            'arrival_place' => fake()->city(),
+            'departure_date' => fake()->dateTimeBetween('now', '6 days'),
+            'arrival_date' => fake()->dateTimeBetween('7 days', '14days'),
             'total_passengers' => $total_passengers = intval($price / rand(100, 200)),
             'available_passengers' => $total_passengers,
         ];

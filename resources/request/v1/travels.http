@@ -18,7 +18,7 @@ Authorization: Bearer {{SANCTUM_TOKEN}}
   "done": false
 }
 
-GET {{APP_URL}}/api/v1/travels/21
+GET {{APP_URL}}/api/v1/travels/1
 Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
