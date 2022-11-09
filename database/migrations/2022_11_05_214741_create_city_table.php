@@ -14,7 +14,6 @@ return new class extends Migration
     public function up()
     {
         Schema::create('city_travel', function (Blueprint $table) {
-            /* $table->primary(['travel_id', 'city_id']); */
             $table->id();
 
             $table->unsignedBigInteger('travel_id');
@@ -22,8 +21,6 @@ return new class extends Migration
 
             $table->foreign('travel_id')->references('id')->on('travels');
             $table->foreign('city_id')->references('id')->on('cities');
-
-            /* $table->timestamps(); */
         });
     }
 

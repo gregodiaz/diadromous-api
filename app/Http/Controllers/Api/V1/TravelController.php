@@ -22,7 +22,7 @@ class TravelController extends Controller
      */
     public function index()
     {
-        $travels = Travel::all();
+        $travels = Travel::with('cities')->get();
 
         return $travels;
     }
@@ -48,11 +48,11 @@ class TravelController extends Controller
      */
     public function show(Travel $travel)
     {
-        // fake a city coordenates
-        $lat = floatval(rand(-90, 90));
-        $long = floatval(rand(-180, 180));
+        $latitude = $travel->cities->first()->latitude;
+        $longitude = $travel->cities->first()->longitude;
+        $departure = Carbon::parse($travel->departure_date)->setTimezone('UTC');
 
-        $validation = $this->manage->validator($lat, $long, Carbon::parse($travel->departure_time)->setTimezone('UTC'));
+        $validation = $this->manage->validator($latitude, $longitude, $departure);
 
         $travel_with_validation = collect($travel)->merge(compact('validation'));
 
