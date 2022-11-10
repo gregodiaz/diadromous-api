@@ -1,0 +1,16 @@
+GET {{APP_URL}}/api/v1/cities
+Accept: application/json
+
+POST {{APP_URL}}/api/v1/cities
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "buenos aires"
+}
+
+GET {{APP_URL}}/api/v1/cities/1
+Accept: application/json
+
+DELETE {{APP_URL}}/api/v1/cities/2
+Accept: application/json

@@ -1,11 +1,9 @@
 GET {{APP_URL}}/api/v1/travels
 Accept: application/json
-Authorization: Bearer {{SANCTUM_TOKEN}}
 
 POST {{APP_URL}}/api/v1/travels
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer {{SANCTUM_TOKEN}}
 
 {
   "price": "1333.3",
@@ -18,12 +16,10 @@ Authorization: Bearer {{SANCTUM_TOKEN}}
 
 GET {{APP_URL}}/api/v1/travels/1
 Accept: application/json
-Authorization: Bearer {{SANCTUM_TOKEN}}
 
 PATCH {{APP_URL}}/api/v1/travels/21
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer {{SANCTUM_TOKEN}}
 
 {
   "price" : "1694.3",
@@ -33,4 +29,3 @@ Authorization: Bearer {{SANCTUM_TOKEN}}
 
 DELETE {{APP_URL}}/api/v1/travels/21
 Accept: application/json
-Authorization: Bearer {{SANCTUM_TOKEN}}

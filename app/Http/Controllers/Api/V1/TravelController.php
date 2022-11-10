@@ -50,9 +50,9 @@ class TravelController extends Controller
     {
         $latitude = $travel->cities->first()->latitude;
         $longitude = $travel->cities->first()->longitude;
-        $departure = Carbon::parse($travel->departure_date)->setTimezone('UTC');
+        $departure_date = Carbon::parse($travel->departure_date)->setTimezone('UTC');
 
-        $validation = $this->manage->validator($latitude, $longitude, $departure);
+        $validation = $this->manage->validator($latitude, $longitude, $departure_date);
 
         $travel_with_validation = collect($travel)->merge(compact('validation'));
 
