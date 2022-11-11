@@ -1,9 +1,10 @@
-# GET user
+# GET user logged
 GET {{APP_URL}}/api/user
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
+# log in
 POST {{APP_URL}}/api/login
 Accept: application/json
 Content-Type: application/json
@@ -14,6 +15,7 @@ Content-Type: application/json
   "password" : "password"
 }
 
+# register
 POST {{APP_URL}}/api/register
 Accept: application/json
 Content-Type: application/json

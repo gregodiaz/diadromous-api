@@ -1,6 +1,8 @@
+# GET all cities
 GET {{APP_URL}}/api/v1/cities
 Accept: application/json
 
+# create city by name
 POST {{APP_URL}}/api/v1/cities
 Accept: application/json
 Content-Type: application/json
@@ -9,8 +11,10 @@ Content-Type: application/json
   "name": "buenos aires"
 }
 
+# GET city by id
 GET {{APP_URL}}/api/v1/cities/1
 Accept: application/json
 
-DELETE {{APP_URL}}/api/v1/cities/2
+# DELETE city by id
+DELETE {{APP_URL}}/api/v1/cities/3
 Accept: application/json

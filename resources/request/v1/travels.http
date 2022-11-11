@@ -1,31 +1,42 @@
+# GET all travels with attached cities
 GET {{APP_URL}}/api/v1/travels
 Accept: application/json
 
+# create travel with cities by name
 POST {{APP_URL}}/api/v1/travels
 Accept: application/json
 Content-Type: application/json
 
-{
-  "price": "1333.3",
-  "departure_date": "2022-11-05 19:46:08",
-  "arrival_date": "2022-11-07 21:11:16",
-  "total_passengers": 10,
-  "available_passengers": 10,
-  "done": false
-}
+[
+    { 
+        "price": "1333.3",
+        "departure_date": "2022-11-12 19:46:08",
+        "arrival_date": "2022-11-17 21:11:16",
+        "total_passengers": 10,
+        "available_passengers": 10,
+        "done": false
+    },
+    {
+        "departure_city":"Buenos Aires",
+        "arrival_city":"Buenos"
+    }
+]
 
-GET {{APP_URL}}/api/v1/travels/1
+# GET travel by id
+GET {{APP_URL}}/api/v1/travels/20
 Accept: application/json
 
-PATCH {{APP_URL}}/api/v1/travels/21
+# update travel
+PATCH {{APP_URL}}/api/v1/travels/20
 Accept: application/json
 Content-Type: application/json
 
 {
   "price" : "1694.3",
-  "departure_date" : "2022-11-9 19:46:08",
-  "done" : false
+  "departure_date" : "2022-11-14 19:46:08",
+  "done" : true
 }
 
-DELETE {{APP_URL}}/api/v1/travels/21
+# DELETE travel by id
+DELETE {{APP_URL}}/api/v1/travels/20
 Accept: application/json

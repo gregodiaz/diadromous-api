@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\City;
 use App\Models\Travel;
 use App\Services\ManageTravel;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class TravelController extends Controller
      */
     public function index()
     {
-        $travels = Travel::with('cities')->get();
+        $travels = Travel::with('cities')->where('done', false)->get();
 
         return $travels;
     }
@@ -35,7 +36,17 @@ class TravelController extends Controller
      */
     public function store(Request $request)
     {
-        $new_travel = Travel::create($request->all());
+        $req_collection = collect($request);
+
+        $new_travel = Travel::create($req_collection->first());
+
+        $departure_city = City::where('name', $req_collection->last()['departure_city'])->first();
+        $arrival_city = City::where('name', $req_collection->last()['arrival_city'])->first();
+
+        if (!$departure_city) return response()->json(['meesage' => 'Departure city not found.']);
+        if (!$arrival_city) return response()->json(['meesage' => 'Arrival city not found.']);
+
+        $new_travel->cities()->sync([$departure_city['id'], $arrival_city['id']]);
 
         return $new_travel;
     }
