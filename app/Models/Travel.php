@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Models\City;
 use App\Models\Ticket;
 
 class Travel extends Model
@@ -18,5 +19,10 @@ class Travel extends Model
     public function ticket()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function cities()
+    {
+        return $this->belongsToMany(City::class);
     }
 }

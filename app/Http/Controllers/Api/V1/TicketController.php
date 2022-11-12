@@ -18,7 +18,7 @@ class TicketController extends Controller
     {
         $tickets = Ticket::where('user_id', Auth::id())->get();
 
-        return response()->json($tickets);
+        return $tickets;
     }
 
     /**
@@ -33,7 +33,7 @@ class TicketController extends Controller
             ->ticket
             ->where('user_id', Auth::id()) ->all();
 
-        return response()->json($tickets);
+        return $tickets;
     }
 
     /**
@@ -55,7 +55,7 @@ class TicketController extends Controller
 
         $travel->decrement('available_passengers');
 
-        return response()->json($new_ticket);
+        return $new_ticket;
     }
 
     /**
@@ -73,7 +73,7 @@ class TicketController extends Controller
             ->where('user_id', Auth::id())
             ->firstorfail();
 
-        return response()->json($found_ticket);
+        return $found_ticket;
     }
 
     /**
@@ -95,6 +95,6 @@ class TicketController extends Controller
 
         $travel->increment('available_passengers');
 
-        return response()->json($ticket_to_delete);
+        return $ticket_to_delete;
     }
 }

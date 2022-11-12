@@ -3,23 +3,23 @@ GET {{APP_URL}}/api/v1/tickets
 Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
-# GET all tickets from {travel}
-GET {{APP_URL}}/api/v1/travels/3/tickets
-Accept: application/json
-Authorization: Bearer {{SANCTUM_TOKEN}}
-
-# create ticket for {travel}
+# create ticket for travel
 POST {{APP_URL}}/api/v1/travels/2/tickets
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
-# show {ticket} from {travel}
-GET {{APP_URL}}/api/v1/travels/2/tickets/21
+# GET all tickets from travel
+GET {{APP_URL}}/api/v1/travels/2/tickets
 Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
-# cancel {ticket} from {travel}
-DELETE {{APP_URL}}/api/v1/travels/2/tickets/21
+# show ticket from travel
+GET {{APP_URL}}/api/v1/travels/2/tickets/1
+Accept: application/json
+Authorization: Bearer {{SANCTUM_TOKEN}}
+
+# cancel ticket from travel
+DELETE {{APP_URL}}/api/v1/travels/2/tickets/2
 Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}

@@ -21,12 +21,12 @@ class OddsOfCancelling
     ];
 
     /**
-     * Create and array with the weighteds odds of cancelling based on max forecast variables a week from now
+     * Create and associative array with the weighteds odds of cancelling based on max forecast variables a week from now
      *
      * @param float $latitude    
      * @param float $longitude      
      * @param Carbon $departure_date
-     * @return Collection $cancelation_percentages In form [DateTime => float] a week from now
+     * @return Collection $cancelation_percentages In form [DateTime => percentages] a week from now
      */
     public function calculate(float $latitude, float $longitude, Carbon $departure_date): Collection
     {
