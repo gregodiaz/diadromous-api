@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\Travel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
@@ -14,7 +15,7 @@ class TicketController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function all()
+    public function index()
     {
         $tickets = Ticket::where('user_id', Auth::id())->get();
 
@@ -22,28 +23,15 @@ class TicketController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @param  \App\Models\Travel  $travel
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Travel $travel)
-    {
-        $tickets = $travel
-            ->ticket
-            ->where('user_id', Auth::id()) ->all();
-
-        return $tickets;
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Models\Travel  $travel
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Travel $travel)
+    public function store(Request $request)
     {
+        $travel = Travel::find($request->travel_id);
+
         if ($travel->available_passengers === 0) return response()->json(['message' => 'No tickets left']);
 
         $new_ticket = $travel
@@ -61,40 +49,26 @@ class TicketController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Travel  $travel
      * @param  \App\Models\Ticket  $ticket
      * @return \Illuminate\Http\Response
      */
-    public function show(Travel $travel, Ticket $ticket)
+    public function show(Ticket $ticket)
     {
-        $found_ticket = $travel
-            ->ticket
-            ->where('id', $ticket->id)
-            ->where('user_id', Auth::id())
-            ->firstorfail();
-
-        return $found_ticket;
+        return $ticket;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Travel  $travel
      * @param  \App\Models\Ticket  $ticket
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Travel $travel, Ticket $ticket)
+    public function destroy(Ticket $ticket)
     {
-        $ticket_to_delete = $travel
-            ->ticket
-            ->where('id', $ticket->id)
-            ->where('user_id', Auth::id())
-            ->firstorfail();
+        $ticket->travel->increment('available_passengers');
 
-        $ticket_to_delete->delete();
+        $ticket->delete();
 
-        $travel->increment('available_passengers');
-
-        return $ticket_to_delete;
+        return $ticket;
     }
 }
