@@ -6,7 +6,7 @@ use App\Services\ForecastApi;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class OddsOfCancelling
+class OddsOfCancellingTravel
 {
     public function __construct(
         private ForecastApi $forecast,

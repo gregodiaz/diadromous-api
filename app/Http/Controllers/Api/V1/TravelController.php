@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\City;
 use App\Models\Travel;
 use App\Services\ManageTravel;
 use Illuminate\Http\Request;
@@ -12,7 +11,7 @@ use Illuminate\Support\Carbon;
 class TravelController extends Controller
 {
     public function __construct(
-        private ManageTravel $manage,
+        private ManageTravel $manageTravel,
     ) {
     }
 
@@ -36,17 +35,17 @@ class TravelController extends Controller
      */
     public function store(Request $request)
     {
-        $req_collection = collect($request);
+        $validated_travel = collect($this->manageTravel->store($request));
 
-        $new_travel = Travel::create($req_collection->first());
+        if ($validated_travel->get('message')) return response()->json($validated_travel);
 
-        $departure_city = City::where('name', $req_collection->last()['departure_city'])->first();
-        $arrival_city = City::where('name', $req_collection->last()['arrival_city'])->first();
-
-        if (!$departure_city) return response()->json(['meesage' => 'Departure city not found.']);
-        if (!$arrival_city) return response()->json(['meesage' => 'Arrival city not found.']);
-
-        $new_travel->cities()->sync([$departure_city['id'], $arrival_city['id']]);
+        $new_travel = Travel::create($validated_travel->get('travel'));
+        $new_travel->cities()->sync(
+            [
+                $validated_travel->get('departure_city')['id'] => ['type_id' => 1],
+                $validated_travel->get('arrival_city')['id'] => ['type_id' => 2],
+            ]
+        );
 
         return $new_travel;
     }
@@ -63,7 +62,7 @@ class TravelController extends Controller
         $longitude = $travel->cities->first()->longitude;
         $departure_date = Carbon::parse($travel->departure_date)->setTimezone('UTC');
 
-        $validation = $this->manage->validator($latitude, $longitude, $departure_date);
+        $validation = $this->manageTravel->show($latitude, $longitude, $departure_date);
 
         $travel_with_validation = collect($travel)->merge(compact('validation'));
 

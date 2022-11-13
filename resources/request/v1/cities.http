@@ -16,5 +16,5 @@ GET {{APP_URL}}/api/v1/cities/1
 Accept: application/json
 
 # DELETE city by id
-DELETE {{APP_URL}}/api/v1/cities/3
+DELETE {{APP_URL}}/api/v1/cities/1
 Accept: application/json
