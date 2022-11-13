@@ -5,10 +5,10 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Http;
 
 use App\Models\User;
 use App\Models\City;
+use App\Models\CityTravelType;
 use App\Models\Travel;
 
 class DatabaseSeeder extends Seeder
@@ -20,30 +20,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $cities_response = Http::get("https://raw.githubusercontent.com/lutangar/cities.json/master/cities.json")
-            ->collect()
-            ->splice(1074, 150);
+        $cities = requestCities();
 
-        $cities = collect($cities_response)
-            ->map(function ($city) {
-                return  [
-                    'country_code' => $city['country'],
-                    'name' => $city['name'],
-                    'latitude' => $city['lat'],
-                    'longitude' => $city['lng'],
-                ];
-            });
+        City::factory()->createMany($cities);
 
         User::factory(10)->create();
-        City::factory()->createMany($cities);
+
+        CityTravelType::factory()->create(['name' => 'Departure']);
+        CityTravelType::factory()->create(['name' => 'Arrival',]);
 
         $travels = Travel::factory(20)->create();
 
         collect($travels)->map(function ($travel) use ($cities) {
-            $travel->cities()->attach([
-                rand(0, $cities->count()),
-                rand(0, $cities->count()),
-            ]);
+            $departure_city_id = rand(1, $cities->count());
+            $arrival_city_id = rand(1, $cities->count());
+
+            $travel->cities()->sync([$departure_city_id => ['type_id' => 1], $arrival_city_id => ['type_id' => 2]]);
         });
     }
 }

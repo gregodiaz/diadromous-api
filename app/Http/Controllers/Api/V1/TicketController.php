@@ -32,7 +32,7 @@ class TicketController extends Controller
     {
         $travel = Travel::find($request->travel_id);
 
-        if ($travel->available_passengers === 0) return response()->json(['message' => 'No tickets left']);
+        if ($travel->available_passengers === 0) return response()->json(['message' => 'No tickets left.']);
 
         $new_ticket = $travel
             ->ticket()
@@ -54,6 +54,8 @@ class TicketController extends Controller
      */
     public function show(Ticket $ticket)
     {
+        if ($ticket->user_id !== Auth::id()) return response()->json(['message' => 'This ticket belongs to another user.']);
+
         return $ticket;
     }
 
@@ -65,6 +67,8 @@ class TicketController extends Controller
      */
     public function destroy(Ticket $ticket)
     {
+        if ($ticket->user_id !== Auth::id()) return response()->json(['message' => 'This ticket belongs to another user.']);
+
         $ticket->travel->increment('available_passengers');
 
         $ticket->delete();

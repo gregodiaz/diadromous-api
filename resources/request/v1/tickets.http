@@ -19,6 +19,6 @@ Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
 # cancel ticket from travel
-DELETE {{APP_URL}}/api/v1/tickets/2
+DELETE {{APP_URL}}/api/v1/tickets/1
 Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
