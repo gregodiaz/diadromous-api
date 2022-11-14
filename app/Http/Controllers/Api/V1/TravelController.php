@@ -40,10 +40,13 @@ class TravelController extends Controller
         if ($validated_travel->get('message')) return response()->json($validated_travel);
 
         $new_travel = Travel::create($validated_travel->get('travel'));
+
+        $cities = collect($validated_travel->get('cities'));
+
         $new_travel->cities()->sync(
             [
-                $validated_travel->get('departure_city')['id'] => ['type_id' => 1],
-                $validated_travel->get('arrival_city')['id'] => ['type_id' => 2],
+                $cities[0]['id'] => ['type_id' => $cities[0]['type']['id']],
+                $cities[1]['id'] => ['type_id' => $cities[1]['type']['id']],
             ]
         );
 
@@ -78,6 +81,9 @@ class TravelController extends Controller
      */
     public function update(Request $request, Travel $travel)
     {
+        $departure_date = Carbon::parse($request['departure_date'])->setTimezone('UTC');
+        if ($departure_date->isPast()) return ['message' => 'The departure datemust be at least today.'];
+
         $travel->update($request->all());
 
         return $travel;

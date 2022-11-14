@@ -16,18 +16,24 @@ Content-Type: application/json
         "available_passengers": 10,
         "done": false
     },
-    "route": {
-        "departure_city":"Piedras Blancas",
-        "arrival_city":"Clorinda"
-    }
+    "cities": [
+        {
+            "city_travel_type_id": 1,
+            "city_id": 43
+        },
+        {
+            "city_travel_type_id": 2,
+            "city_id": 69
+        }
+    ]
 }
 
 # GET travel by id
-GET {{APP_URL}}/api/v1/travels/41
+GET {{APP_URL}}/api/v1/travels/43
 Accept: application/json
 
 # update travel
-PATCH {{APP_URL}}/api/v1/travels/20
+PATCH {{APP_URL}}/api/v1/travels/2
 Accept: application/json
 Content-Type: application/json
 

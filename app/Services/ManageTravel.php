@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\City;
+use App\Models\CityTravelType;
 use App\Services\OddsOfCancellingTravel;
 use App\Services\ValidateTravel;
 use Illuminate\Http\Request;
@@ -43,16 +44,22 @@ class ManageTravel
     public function store(Request $request): array
     {
         $travel = $request['travel'];
-        $route = collect($request['route']);
+        $requests_cities = collect($request['cities']);
 
         $departure_date = Carbon::parse($travel['departure_date'])->setTimezone('UTC');
-        $departure_city = City::where('name', $route->get('departure_city'))->first();
-        $arrival_city = City::where('name', $route->get('arrival_city'))->first();
-
         if ($departure_date->isPast()) return ['message' => 'The departure datemust be at least today.'];
-        if (!$departure_city) return ['message' => 'Departure city not found.'];
-        if (!$arrival_city) return ['message' => 'Arrival city not found.'];
 
-        return compact('travel', 'departure_city', 'arrival_city');
+        $cities = $requests_cities->map(function ($city) {
+            $city_found = City::find($city['city_id']);
+            $type = CityTravelType::find($city['city_travel_type_id']);
+
+            return collect(compact('type'))->merge($city_found);
+        });
+
+        foreach ($cities as $city) {
+            if ($city->count() === 1) return ['message' => $city['type']['name'] . " city not found"];
+        }
+
+        return compact('travel', 'cities');
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\Travel;
+use App\Models\CityTravel;
 
 class City extends Model
 {
@@ -16,6 +17,6 @@ class City extends Model
 
     public function travels()
     {
-        return $this->belongsToMany(Travel::class);
+        return $this->belongsToMany(Travel::class)->using(CityTravel::class)->withPivot('type_id');
     }
 }
