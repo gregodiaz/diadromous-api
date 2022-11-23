@@ -56,7 +56,9 @@ class OddsOfCancellingTravel
         });
 
         // combines the percentages with their respective dates
-        $cancelation_percentages = $forecast_date->combine($weighted_average_percentages);
+        $cancelation_percentages = $forecast_date->map(function ($date, $index) use ($weighted_average_percentages) {
+            return ['date' => $date, 'percentage' => $weighted_average_percentages[$index]];
+        });
 
         return $cancelation_percentages;
     }
