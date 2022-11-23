@@ -22,7 +22,7 @@ class TravelController extends Controller
      */
     public function index()
     {
-        $travels = Travel::with('cities')->where('done', false)->get();
+        $travels = Travel::with('cities')->where('done', false)->orderBy('id', 'asc')->get();
 
         return $travels;
     }

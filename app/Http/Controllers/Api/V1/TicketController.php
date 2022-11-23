@@ -19,6 +19,12 @@ class TicketController extends Controller
     {
         $tickets = Ticket::where('user_id', Auth::id())->get();
 
+        $all = collect($tickets)->map(function ($ticket) {
+            $travel = Travel::where('id', $ticket->travel_id)->with('cities')->first();
+            return collect($ticket)->merge(compact('travel'));
+        });
+
+        return $all;
         return $tickets;
     }
 
@@ -35,7 +41,7 @@ class TicketController extends Controller
         if ($travel->available_passengers === 0) return response()->json(['message' => 'No tickets left.']);
 
         $new_ticket = $travel
-            ->ticket()
+            ->tickets()
             ->create([
                 'user_id' => Auth::id(),
                 'seat_number' => $travel->available_passengers,
@@ -69,7 +75,8 @@ class TicketController extends Controller
     {
         if ($ticket->user_id !== Auth::id()) return response()->json(['message' => 'This ticket belongs to another user.']);
 
-        $ticket->travel->increment('available_passengers');
+        $travel = Travel::where('id', $ticket->travel_id)->with('cities')->first();
+        $travel->increment('available_passengers');
 
         $ticket->delete();
 
