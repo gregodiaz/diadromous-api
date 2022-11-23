@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
 
             $table->float('price');
-            $table->dateTime('departure_date');
-            $table->dateTime('arrival_date');
             $table->unsignedInteger('total_passengers');
             $table->unsignedInteger('available_passengers');
             $table->boolean('done')->default(false);

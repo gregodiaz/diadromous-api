@@ -36,17 +36,22 @@ class TravelController extends Controller
     public function store(Request $request)
     {
         $validated_travel = collect($this->manageTravel->store($request));
-
         if ($validated_travel->get('message')) return response()->json($validated_travel);
 
         $new_travel = Travel::create($validated_travel->get('travel'));
 
-        $cities = collect($validated_travel->get('cities'));
+        $cities = $validated_travel->get('cities');
 
         $new_travel->cities()->sync(
             [
-                $cities[0]['id'] => ['type_id' => $cities[0]['type']['id']],
-                $cities[1]['id'] => ['type_id' => $cities[1]['type']['id']],
+                $cities[0]['id'] => [
+                    'type_id' => $cities[0]['type']['id'],
+                    'port_call' => $request['cities'][0]['port_call']
+                ],
+                $cities[1]['id'] => [
+                    'type_id' => $cities[1]['type']['id'],
+                    'port_call' => $request['cities'][1]['port_call']
+                ],
             ]
         );
 
@@ -63,7 +68,7 @@ class TravelController extends Controller
     {
         $latitude = $travel->cities->first()->latitude;
         $longitude = $travel->cities->first()->longitude;
-        $departure_date = Carbon::parse($travel->departure_date)->setTimezone('UTC');
+        $departure_date = Carbon::parse($travel->cities->first()->port_call)->setTimezone('UTC');
 
         $validation = $this->manageTravel->show($latitude, $longitude, $departure_date);
 

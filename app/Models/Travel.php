@@ -24,8 +24,12 @@ class Travel extends Model
     public function cities()
     {
         return $this->belongsToMany(City::class)->using(CityTravel::class)
-            ->withPivot('type_id')
+            ->withPivot(['type_id', 'port_call'])
             ->join('city_travel_types', 'type_id', '=', 'city_travel_types.id')
-            ->select('city_travel_types.name as type_name', 'cities.* as city');
+            ->select(
+                'city_travel_types.name as type_name',
+                'city_travel.port_call as port_call',
+                'cities.* as city'
+            );
     }
 }

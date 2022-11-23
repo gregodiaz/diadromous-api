@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();
 
         CityTravelType::factory()->create(['name' => 'Departure']);
-        CityTravelType::factory()->create(['name' => 'Arrival',]);
+        CityTravelType::factory()->create(['name' => 'Arrival']);
 
         $travels = Travel::factory(20)->create();
 
@@ -35,7 +35,18 @@ class DatabaseSeeder extends Seeder
             $departure_city_id = rand(1, $cities->count());
             $arrival_city_id = rand(1, $cities->count());
 
-            $travel->cities()->sync([$departure_city_id => ['type_id' => 1], $arrival_city_id => ['type_id' => 2]]);
+            $travel->cities()->sync(
+                [
+                    $departure_city_id => [
+                        'type_id' => 1,
+                        'port_call' => fake()->dateTimeBetween('-1 days', '6 days'),
+                    ],
+                    $arrival_city_id => [
+                        'type_id' => 2,
+                        'port_call' => fake()->dateTimeBetween('7 days', '14days'),
+                    ]
+                ]
+            );
         });
     }
 }
