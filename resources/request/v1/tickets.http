@@ -4,22 +4,21 @@ Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
 # create ticket for travel
-POST {{APP_URL}}/api/v1/travels/2/tickets
+POST {{APP_URL}}/api/v1/tickets
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
-# GET all tickets from travel
-GET {{APP_URL}}/api/v1/travels/2/tickets
-Accept: application/json
-Authorization: Bearer {{SANCTUM_TOKEN}}
+{
+    "travel_id": 1
+}
 
 # show ticket from travel
-GET {{APP_URL}}/api/v1/travels/2/tickets/1
+GET {{APP_URL}}/api/v1/tickets/1
 Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}
 
 # cancel ticket from travel
-DELETE {{APP_URL}}/api/v1/travels/2/tickets/2
+DELETE {{APP_URL}}/api/v1/tickets/1
 Accept: application/json
 Authorization: Bearer {{SANCTUM_TOKEN}}

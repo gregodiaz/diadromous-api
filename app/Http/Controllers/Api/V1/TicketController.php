@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\Travel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
@@ -14,40 +15,33 @@ class TicketController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function all()
+    public function index()
     {
         $tickets = Ticket::where('user_id', Auth::id())->get();
 
-        return $tickets;
-    }
+        $all = collect($tickets)->map(function ($ticket) {
+            $travel = Travel::where('id', $ticket->travel_id)->with('cities')->first();
+            return collect($ticket)->merge(compact('travel'));
+        });
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \App\Models\Travel  $travel
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Travel $travel)
-    {
-        $tickets = $travel
-            ->ticket
-            ->where('user_id', Auth::id()) ->all();
-
+        return $all;
         return $tickets;
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Models\Travel  $travel
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Travel $travel)
+    public function store(Request $request)
     {
-        if ($travel->available_passengers === 0) return response()->json(['message' => 'No tickets left']);
+        $travel = Travel::find($request->travel_id);
+
+        if ($travel->available_passengers === 0) return response()->json(['message' => 'No tickets left.']);
 
         $new_ticket = $travel
-            ->ticket()
+            ->tickets()
             ->create([
                 'user_id' => Auth::id(),
                 'seat_number' => $travel->available_passengers,
@@ -61,40 +55,31 @@ class TicketController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Travel  $travel
      * @param  \App\Models\Ticket  $ticket
      * @return \Illuminate\Http\Response
      */
-    public function show(Travel $travel, Ticket $ticket)
+    public function show(Ticket $ticket)
     {
-        $found_ticket = $travel
-            ->ticket
-            ->where('id', $ticket->id)
-            ->where('user_id', Auth::id())
-            ->firstorfail();
+        if ($ticket->user_id !== Auth::id()) return response()->json(['message' => 'This ticket belongs to another user.']);
 
-        return $found_ticket;
+        return $ticket;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Travel  $travel
      * @param  \App\Models\Ticket  $ticket
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Travel $travel, Ticket $ticket)
+    public function destroy(Ticket $ticket)
     {
-        $ticket_to_delete = $travel
-            ->ticket
-            ->where('id', $ticket->id)
-            ->where('user_id', Auth::id())
-            ->firstorfail();
+        if ($ticket->user_id !== Auth::id()) return response()->json(['message' => 'This ticket belongs to another user.']);
 
-        $ticket_to_delete->delete();
-
+        $travel = Travel::where('id', $ticket->travel_id)->with('cities')->first();
         $travel->increment('available_passengers');
 
-        return $ticket_to_delete;
+        $ticket->delete();
+
+        return $ticket;
     }
 }

@@ -16,13 +16,20 @@ class Travel extends Model
     protected $table = 'travels';
     protected $guarded = [];
 
-    public function ticket()
+    public function tickets()
     {
         return $this->hasMany(Ticket::class);
     }
 
     public function cities()
     {
-        return $this->belongsToMany(City::class);
+        return $this->belongsToMany(City::class)->using(CityTravel::class)
+            ->withPivot(['type_id', 'port_call'])
+            ->join('city_travel_types', 'type_id', '=', 'city_travel_types.id')
+            ->select(
+                'city_travel_types.name as type_name',
+                'city_travel.port_call as port_call',
+                'cities.* as city'
+            );
     }
 }

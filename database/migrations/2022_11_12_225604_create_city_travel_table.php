@@ -18,9 +18,12 @@ return new class extends Migration
 
             $table->unsignedBigInteger('travel_id');
             $table->unsignedBigInteger('city_id');
+            $table->unsignedBigInteger('type_id');
+            $table->dateTime('port_call');
 
-            $table->foreign('travel_id')->references('id')->on('travels');
             $table->foreign('city_id')->references('id')->on('cities');
+            $table->foreign('travel_id')->references('id')->on('travels');
+            $table->foreign('type_id')->references('id')->on('city_travel_types');
         });
     }
 

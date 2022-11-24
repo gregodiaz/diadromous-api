@@ -27,12 +27,9 @@ Route::apiResource('v1/cities', CityV1::class)->except('update');
 Route::apiResource('v1/travels', TravelV1::class);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('v1/tickets', TicketV1::class)->except('update');
+
     Route::get('/user', function (Request $request) {
         return $request->user();
-    });
-
-    Route::apiResource('v1/travels.tickets', TicketV1::class)->except('update');
-    Route::controller(TicketV1::class)->group(function () {
-        Route::get('/v1/tickets', 'all');
     });
 });

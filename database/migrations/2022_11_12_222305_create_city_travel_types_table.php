@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('travels', function (Blueprint $table) {
+        Schema::create('city_travel_types', function (Blueprint $table) {
             $table->id();
 
-            $table->float('price');
-            $table->unsignedInteger('total_passengers');
-            $table->unsignedInteger('available_passengers');
-            $table->boolean('done')->default(false);
+            $table->string('name');
 
             $table->softDeletes();
             $table->timestamps();
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('travels');
+        Schema::dropIfExists('city_travel_types');
     }
 };

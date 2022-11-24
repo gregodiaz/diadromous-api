@@ -6,16 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use App\Models\Travel;
+use App\Models\CityTravel;
 
-class Ticket extends Model
+class CityTravelType extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
-
-    public function travels()
+    public function cityTravels()
     {
-        return $this->belongsTo(Travel::class);
+        return $this->hasMany(CityTravel::class);
     }
 }

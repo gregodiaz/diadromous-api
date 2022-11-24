@@ -19,9 +19,9 @@ class ForecastApi
     {
         $today = Carbon::now();
         $end_date =
-            $departure_date->isPast() || $departure_date->diffInDays($today) > 7
-            ? $today->addWeek()
-            : $departure_date;
+            $departure_date->isPast() || $departure_date->diffInDays($today) > 7 ?
+            Carbon::now()->addWeek() :
+            $departure_date;
 
         $api_response = Http::forecast()->get(
             '/',

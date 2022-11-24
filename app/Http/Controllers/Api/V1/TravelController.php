@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\City;
 use App\Models\Travel;
 use App\Services\ManageTravel;
 use Illuminate\Http\Request;
@@ -12,7 +11,7 @@ use Illuminate\Support\Carbon;
 class TravelController extends Controller
 {
     public function __construct(
-        private ManageTravel $manage,
+        private ManageTravel $manageTravel,
     ) {
     }
 
@@ -23,7 +22,7 @@ class TravelController extends Controller
      */
     public function index()
     {
-        $travels = Travel::with('cities')->where('done', false)->get();
+        $travels = Travel::with('cities')->where('done', false)->orderBy('id', 'asc')->get();
 
         return $travels;
     }
@@ -36,17 +35,25 @@ class TravelController extends Controller
      */
     public function store(Request $request)
     {
-        $req_collection = collect($request);
+        $validated_travel = collect($this->manageTravel->store($request));
+        if ($validated_travel->get('message')) return response()->json($validated_travel);
 
-        $new_travel = Travel::create($req_collection->first());
+        $new_travel = Travel::create($validated_travel->get('travel'));
 
-        $departure_city = City::where('name', $req_collection->last()['departure_city'])->first();
-        $arrival_city = City::where('name', $req_collection->last()['arrival_city'])->first();
+        $cities = $validated_travel->get('cities');
 
-        if (!$departure_city) return response()->json(['meesage' => 'Departure city not found.']);
-        if (!$arrival_city) return response()->json(['meesage' => 'Arrival city not found.']);
-
-        $new_travel->cities()->sync([$departure_city['id'], $arrival_city['id']]);
+        $new_travel->cities()->sync(
+            [
+                $cities[0]['id'] => [
+                    'type_id' => $cities[0]['type']['id'],
+                    'port_call' => $request['cities'][0]['port_call']
+                ],
+                $cities[1]['id'] => [
+                    'type_id' => $cities[1]['type']['id'],
+                    'port_call' => $request['cities'][1]['port_call']
+                ],
+            ]
+        );
 
         return $new_travel;
     }
@@ -61,9 +68,9 @@ class TravelController extends Controller
     {
         $latitude = $travel->cities->first()->latitude;
         $longitude = $travel->cities->first()->longitude;
-        $departure_date = Carbon::parse($travel->departure_date)->setTimezone('UTC');
+        $departure_date = Carbon::parse($travel->cities->first()->port_call)->setTimezone('UTC');
 
-        $validation = $this->manage->validator($latitude, $longitude, $departure_date);
+        $validation = $this->manageTravel->show($latitude, $longitude, $departure_date);
 
         $travel_with_validation = collect($travel)->merge(compact('validation'));
 
@@ -79,6 +86,9 @@ class TravelController extends Controller
      */
     public function update(Request $request, Travel $travel)
     {
+        $departure_date = Carbon::parse($request['departure_date'])->setTimezone('UTC');
+        if ($departure_date->isPast()) return ['message' => 'The departure datemust be at least today.'];
+
         $travel->update($request->all());
 
         return $travel;

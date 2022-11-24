@@ -6,7 +6,7 @@ use App\Services\ForecastApi;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class OddsOfCancelling
+class OddsOfCancellingTravel
 {
     public function __construct(
         private ForecastApi $forecast,
@@ -56,7 +56,9 @@ class OddsOfCancelling
         });
 
         // combines the percentages with their respective dates
-        $cancelation_percentages = $forecast_date->combine($weighted_average_percentages);
+        $cancelation_percentages = $forecast_date->map(function ($date, $index) use ($weighted_average_percentages) {
+            return ['date' => $date, 'percentage' => $weighted_average_percentages[$index]];
+        });
 
         return $cancelation_percentages;
     }
