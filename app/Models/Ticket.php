@@ -14,8 +14,8 @@ class Ticket extends Model
 
     protected $guarded = [];
 
-    public function travels()
+    public function travel()
     {
-        return $this->belongsTo(Travel::class);
+        return $this->belongsTo(Travel::class, 'travel_id', 'id')->with('cities');
     }
 }

@@ -29,7 +29,7 @@ Content-Type: application/json
 }
 
 # GET travel by id
-GET {{APP_URL}}/api/v1/travels/2
+GET {{APP_URL}}/api/v1/travels/93
 Accept: application/json
 
 # update travel
@@ -39,9 +39,10 @@ Content-Type: application/json
 
 {
   "price" : "1694.3",
+  "total_passengers" : 8,
   "done" : true
 }
 
 # DELETE travel by id
-DELETE {{APP_URL}}/api/v1/travels/1
+DELETE {{APP_URL}}/api/v1/travels/2
 Accept: application/json
