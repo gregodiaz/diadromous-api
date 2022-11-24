@@ -17,14 +17,8 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::where('user_id', Auth::id())->get();
+        $tickets = Ticket::where('user_id', Auth::id())->with('travel')->get();
 
-        $all = collect($tickets)->map(function ($ticket) {
-            $travel = Travel::where('id', $ticket->travel_id)->with('cities')->first();
-            return collect($ticket)->merge(compact('travel'));
-        });
-
-        return $all;
         return $tickets;
     }
 
@@ -37,7 +31,6 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $travel = Travel::find($request->travel_id);
-
         if ($travel->available_passengers === 0) return response()->json(['message' => 'No tickets left.']);
 
         $new_ticket = $travel
@@ -48,6 +41,7 @@ class TicketController extends Controller
             ]);
 
         $travel->decrement('available_passengers');
+        $new_ticket->travel;
 
         return $new_ticket;
     }
@@ -61,6 +55,7 @@ class TicketController extends Controller
     public function show(Ticket $ticket)
     {
         if ($ticket->user_id !== Auth::id()) return response()->json(['message' => 'This ticket belongs to another user.']);
+        $ticket->travel;
 
         return $ticket;
     }
@@ -75,9 +70,7 @@ class TicketController extends Controller
     {
         if ($ticket->user_id !== Auth::id()) return response()->json(['message' => 'This ticket belongs to another user.']);
 
-        $travel = Travel::where('id', $ticket->travel_id)->with('cities')->first();
-        $travel->increment('available_passengers');
-
+        $ticket->travel->increment('available_passengers');
         $ticket->delete();
 
         return $ticket;
