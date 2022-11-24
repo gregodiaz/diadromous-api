@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\TravelCreated;
 use App\Http\Controllers\Controller;
 use App\Models\Travel;
 use App\Services\ManageTravel;
@@ -33,27 +34,13 @@ class TravelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, TravelCreated $travel_created)
     {
-        $validated_travel = collect($this->manageTravel->store($request));
-        if ($validated_travel->get('message')) return response()->json($validated_travel);
+        $new_travel = Travel::create($request->get('travel'));
+        $cities = collect($request->get('cities'));
 
-        $new_travel = Travel::create($validated_travel->get('travel'));
-
-        $cities = $validated_travel->get('cities');
-
-        $new_travel->cities()->sync(
-            [
-                $cities[0]['id'] => [
-                    'type_id' => $cities[0]['type']['id'],
-                    'port_call' => $request['cities'][0]['port_call']
-                ],
-                $cities[1]['id'] => [
-                    'type_id' => $cities[1]['type']['id'],
-                    'port_call' => $request['cities'][1]['port_call']
-                ],
-            ]
-        );
+        $travel_created->dispatch($new_travel, $cities);
+        $new_travel->cities;
 
         return $new_travel;
     }
@@ -66,15 +53,15 @@ class TravelController extends Controller
      */
     public function show(Travel $travel)
     {
-        $latitude = $travel->cities->first()->latitude;
-        $longitude = $travel->cities->first()->longitude;
-        $departure_date = Carbon::parse($travel->cities->first()->port_call)->setTimezone('UTC');
+        $departure_city = $travel->cities->where('type_name', 'Departure')->first();
 
-        $validation = $this->manageTravel->show($latitude, $longitude, $departure_date);
+        $validation = $this->manageTravel->validator(
+            $departure_city->latitude,
+            $departure_city->longitude,
+            Carbon::parse($departure_city->port_call)->setTimezone('UTC'),
+        );
 
-        $travel_with_validation = collect($travel)->merge(compact('validation'));
-
-        return $travel_with_validation;
+        return collect($travel)->merge(compact('validation'));
     }
 
     /**
@@ -86,9 +73,7 @@ class TravelController extends Controller
      */
     public function update(Request $request, Travel $travel)
     {
-        $departure_date = Carbon::parse($request['departure_date'])->setTimezone('UTC');
-        if ($departure_date->isPast()) return ['message' => 'The departure datemust be at least today.'];
-
+        $travel->cities;
         $travel->update($request->all());
 
         return $travel;
@@ -102,6 +87,7 @@ class TravelController extends Controller
      */
     public function destroy(Travel $travel)
     {
+        $travel->cities;
         $travel->delete();
 
         return $travel;
