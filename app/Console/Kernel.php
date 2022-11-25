@@ -16,9 +16,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule
+            ->job(new TravelPortCallJob)
+            ->everyThirtyMinutes()
+            ->appendOutputTo(storage_path() . '/logs/travel.log');
 
-        $schedule->job(new TravelPortCallJob)->hourly();
+        $schedule
+            ->command('queue:work --tries=3 --stop-when-empty')
+            ->everyFiveMinutes()
+            ->appendOutputTo(storage_path() . '/logs/queue.log');
+
+        $schedule
+            ->command('queue:restart')
+            ->everyThreeMinutes();
     }
 
     /**
