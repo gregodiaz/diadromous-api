@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\TravelPortCallJob;
+use App\Jobs\TravelValidatorJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,6 +18,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule
+            ->job(new TravelValidatorJob)
+            ->daily()
+            ->appendOutputTo(storage_path() . '/logs/canceled.log');
+
+        $schedule
             ->job(new TravelPortCallJob)
             ->everyThirtyMinutes()
             ->appendOutputTo(storage_path() . '/logs/travel.log');
@@ -25,10 +31,6 @@ class Kernel extends ConsoleKernel
             ->command('queue:work --tries=3 --stop-when-empty')
             ->everyFiveMinutes()
             ->appendOutputTo(storage_path() . '/logs/queue.log');
-
-        $schedule
-            ->command('queue:restart')
-            ->everyThreeMinutes();
     }
 
     /**
