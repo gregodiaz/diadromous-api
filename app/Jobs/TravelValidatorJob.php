@@ -2,9 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Events\TravelInquiry;
 use App\Models\Travel;
-use App\Services\ManageTravel;
-use App\Services\ValidateTravel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,21 +31,18 @@ class TravelValidatorJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ValidateTravel $validate_travel)
+    public function handle(TravelInquiry $travel_inquiry)
     {
         $travels = Travel::with('cities')->where('done', false)->get();
 
         foreach ($travels as $travel) {
             $departure_city = $travel->cities->where('type_name', 'Departure')->first();
-            if (Carbon::now()->lessThan($departure_city->port_call)) continue;
+            $departure_date = Carbon::parse($departure_city->port_call)->setTimezone('UTC');
 
-            $validation = $validate_travel->validate(
-                $departure_city->latitude,
-                $departure_city->longitude,
-                Carbon::parse($departure_city->port_call)->setTimezone('UTC'),
-            );
+            if (!$departure_date->isToday()) continue;
 
-            if ($validation) $travel->delete();
+            $validation = $travel_inquiry->dispatch($travel);
+            if (!$validation) $travel->delete();
         }
     }
 }

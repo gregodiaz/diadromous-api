@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\TravelCreated;
+use App\Events\TravelInquiry;
 use App\Listeners\AttachCitiesToTravel;
+use App\Listeners\ManageTravel;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         TravelCreated::class => [
             AttachCitiesToTravel::class,
+        ],
+        TravelInquiry::class => [
+            ManageTravel::class,
         ],
     ];
 

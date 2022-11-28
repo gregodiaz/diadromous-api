@@ -19,13 +19,11 @@ class Kernel extends ConsoleKernel
     {
         $schedule
             ->job(new TravelValidatorJob)
-            ->daily()
-            ->appendOutputTo(storage_path() . '/logs/canceled.log');
+            ->daily();
 
         $schedule
             ->job(new TravelPortCallJob)
-            ->everyThirtyMinutes()
-            ->appendOutputTo(storage_path() . '/logs/travel.log');
+            ->everyThirtyMinutes();
 
         $schedule
             ->command('queue:work --tries=3 --stop-when-empty')
