@@ -29,7 +29,7 @@ Content-Type: application/json
 }
 
 # GET travel by id
-GET {{APP_URL}}/api/v1/travels/93
+GET {{APP_URL}}/api/v1/travels/3
 Accept: application/json
 
 # update travel

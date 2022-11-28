@@ -3,19 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Events\TravelCreated;
+use App\Events\TravelInquiry;
 use App\Http\Controllers\Controller;
 use App\Models\Travel;
-use App\Services\ManageTravel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 class TravelController extends Controller
 {
-    public function __construct(
-        private ManageTravel $manageTravel,
-    ) {
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -51,15 +45,9 @@ class TravelController extends Controller
      * @param  \App\Models\Travel  $travel
      * @return \Illuminate\Http\Response
      */
-    public function show(Travel $travel)
+    public function show(Travel $travel, TravelInquiry $travel_inquiry)
     {
-        $departure_city = $travel->cities->where('type_name', 'Departure')->first();
-
-        $validation = $this->manageTravel->validator(
-            $departure_city->latitude,
-            $departure_city->longitude,
-            Carbon::parse($departure_city->port_call)->setTimezone('UTC'),
-        );
+        $validation = $travel_inquiry->dispatch($travel);
 
         return collect($travel)->merge(compact('validation'));
     }
