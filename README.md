@@ -2,30 +2,52 @@
 An api to create fictional ship travels from one city to another -or even more- and validate them or not according to the [open weather forecast api.](https://open-meteo.com/en)
 Just like the weather, the cities of the travel route are real! and are also requested from open-meteo of the [geocoding api.](https://open-meteo.com/en/docs/geocoding-api#geocoding_form)
 
+## Prerequisites
+- Have Docker installed
 
 ## Installation
+
 1. Clone project and go to the folder
 ```bash
 git clone https://github.com/gregodiaz/diadromous-api.git && cd diadromous-api
 ```
+
 2. Install the dependencies 
 ```bash
-composer install
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php81-composer:latest \
+    composer install --ignore-platform-reqs
 ```
+
 3. Create the .env
 ```bash
 cp .env.example .env
 ```
-4. In your .env set the database connections:
-DB_CONNECTION, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD, 
+
+4. If you already have a DBMS (database management system), turn off your with the command
+```bash
+sudo service <DBMS name> stop
+```
+_After using and testing the application, you can start the database again with the same command using the word 'start'_
+
 5. Run
 ```bash
-php artisan key:generate
-php artisan migrate --seed
-php artisan serve
+.vendor/bin/sail up
 ```
+_If you see a message "Docker is not running" is because you need start Docker "rootless". You may check https://docs.docker.com/engine/install/linux-postinstall/_
+_Also if you want it you can replace the '.vendor/bin/sail' adding the alias for 'sail' running in bash ```alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'```_
+```bash
+.vendor/bin/sail artisan key:generate
+```
+```bash
+.vendor/bin/sail artisan migrate --seed
+```
+
 6. Ready to go!
 
 
 ## Usage
-to see the available routes, check the files .http in resources/request/v1/*.http
+To see the available routes, check the http files in ./resources/request/v1/*.http
