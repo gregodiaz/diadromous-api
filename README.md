@@ -27,26 +27,35 @@ docker run --rm \
 cp .env.example .env
 ```
 
-4. If you already have a DBMS (database management system), turn off your with the command
+4. If you already have a DBMS (database management system) or Apache running, turn it off your with the command
 ```bash
 sudo service <DBMS name> stop
 ```
+```bash
+sudo service apache2 stop
+```
 _After using and testing the application, you can start the database again with the same command using the word 'start'_
 
-5. Run
-```bash
-.vendor/bin/sail up
+5. Add line to crontab for task scheduling (_This step is not strictly necessary for the operation of the app_):
 ```
-_If you see a message "Docker is not running" is because you need start Docker "rootless". You may check https://docs.docker.com/engine/install/linux-postinstall/_
-_Also if you want it you can replace the '.vendor/bin/sail' adding the alias for 'sail' running in bash ```alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'```_
-```bash
-.vendor/bin/sail artisan key:generate
-```
-```bash
-.vendor/bin/sail artisan migrate --seed
+* * * * * cd /<path-to-your-project> && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-6. Ready to go!
+6. Start and seed de project. Run:
+```bash
+./vendor/bin/sail up
+```
+_If you see a message "Docker is not running" is because you need start Docker "rootless". You may check https://docs.docker.com/engine/install/linux-postinstall/_
+_Also if you want it, you can replace the './vendor/bin/sail' adding the alias for 'sail' running in bash ```alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'```_
+Open another termial and run:
+```bash
+./vendor/bin/sail artisan key:generate
+```
+```bash
+./vendor/bin/sail artisan migrate --seed
+```
+
+7. Ready to go!
 
 
 ## Usage
