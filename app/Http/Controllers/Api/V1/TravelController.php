@@ -47,9 +47,9 @@ class TravelController extends Controller
      */
     public function show(Travel $travel, TravelInquiry $travel_inquiry)
     {
-        $validation = $travel_inquiry->dispatch($travel);
+        $forecast = $travel_inquiry->dispatch($travel);
 
-        return collect($travel)->merge(compact('validation'));
+        return collect($travel)->put('forecast', $forecast[0]);
     }
 
     /**

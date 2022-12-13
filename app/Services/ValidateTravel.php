@@ -27,10 +27,10 @@ class ValidateTravel
      * @param float $latitude    
      * @param float $longitude    
      * @param Carbon $departure_date    
-     * @return bool $validated    
+     * @return array $validated in form ['validated' => bool]
      */
-    public function validate(float $latitude, float $longitude): bool
-   {
+    public function validate(float $latitude, float $longitude): array
+    {
         $full_forecast = $this->forecast->makeRequest($latitude, $longitude, $this->today->now())->get("hourly");
         $hourly_forecast = collect($full_forecast)->except("time");
 
@@ -40,6 +40,6 @@ class ValidateTravel
 
         $validated = !Validator::make($averages_forecast->all(), self::RULES)->stopOnFirstFailure()->fails();
 
-        return $validated;
+        return compact('validated');
     }
 }

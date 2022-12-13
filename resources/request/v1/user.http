@@ -6,12 +6,10 @@ Authorization: Bearer {{SANCTUM_TOKEN}}
 
 # log in
 POST {{APP_URL}}/api/login
-Accept: application/json
-Content-Type: application/json
 
 {
   "name" : "greg",
-  "email" : "greg@developer.org",
+  "email" : "agreg@developer.com",
   "password" : "password"
 }
 
@@ -22,6 +20,6 @@ Content-Type: application/json
 
 {
   "name" : "greg",
-  "email" : "greg@developer.org",
+  "email" : "greg@developer.com",
   "password" : "password"
 }

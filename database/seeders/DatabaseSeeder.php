@@ -32,18 +32,18 @@ class DatabaseSeeder extends Seeder
         $travels = Travel::factory(20)->create();
 
         collect($travels)->map(function ($travel) use ($cities) {
-            $departure_city_id = rand(1, $cities->count());
-            $arrival_city_id = rand(1, $cities->count());
+            $departure_city_id = rand(1, $cities->count() - 1);
+            $arrival_city_id = rand(1, $cities->count() - 1);
 
             $travel->cities()->sync(
                 [
                     $departure_city_id => [
                         'type_id' => 1,
-                        'port_call' => fake()->dateTimeBetween('-1 days', '6 days'),
+                        'port_call' => fake()->dateTimeBetween('-1 days', '9 days'),
                     ],
                     $arrival_city_id => [
                         'type_id' => 2,
-                        'port_call' => fake()->dateTimeBetween('7 days', '14days'),
+                        'port_call' => fake()->dateTimeBetween('10 days', '14 days'),
                     ]
                 ]
             );

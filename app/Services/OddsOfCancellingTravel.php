@@ -51,14 +51,18 @@ class OddsOfCancellingTravel
         });
 
         // returns the weighted percentages
-        $weighted_average_percentages = $max_percentages->map(function ($max, $key) {
+        $weighted_percentages = $max_percentages->map(function ($max, $key) {
             return intval($max / ((4 / 3) ** (1 + $key)));
         });
 
-        // combines the percentages with their respective dates
-        $cancelation_percentages = $forecast_date->map(function ($date, $index) use ($weighted_average_percentages) {
-            return ['date' => $date, 'percentage' => $weighted_average_percentages[$index]];
-        });
+        // average of all weighted percentages
+        $average_percentages = $weighted_percentages->avg();
+
+        // combines the percentages with the date
+       $cancelation_percentages = collect([
+            'date' => $forecast_date->last(),
+            'percentage' => $average_percentages
+        ]);
 
         return $cancelation_percentages;
     }

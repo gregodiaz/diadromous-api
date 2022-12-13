@@ -35,9 +35,11 @@ class ManageTravel
         $departure_city = $travel->cities->where('type_name', 'Departure')->first();
         $departure_date = Carbon::parse($departure_city->port_call)->setTimezone('UTC');
 
+        if (Carbon::now()->diffInDays($departure_date) > 7) return ['message' => 'The departure date must be a maximum of one week from the consultation in order to generate the calculation of the probability that the trip will be canceled'];
+
         $validation = $departure_date->isPast() ?
-            $this->validate_travel->validate($departure_city->latitude, $departure_city->longitude):
-            $this->percentages->calculate($departure_city->latitude, $departure_city->longitude, $departure_date) ;
+            $this->validate_travel->validate($departure_city->latitude, $departure_city->longitude) :
+            $this->percentages->calculate($departure_city->latitude, $departure_city->longitude, $departure_date);
 
         return $validation;
     }

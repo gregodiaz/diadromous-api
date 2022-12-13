@@ -30,14 +30,13 @@ class TicketController extends Controller
      */
     public function store(Request $request)
     {
-        $travel = Travel::find($request->travel_id);
+        $travel = Travel::find($request->get('travel_id'));
         if ($travel->available_passengers === 0) return response()->json(['message' => 'No tickets left.']);
 
         $new_ticket = $travel
             ->tickets()
             ->create([
                 'user_id' => Auth::id(),
-                'seat_number' => $travel->available_passengers,
             ]);
 
         $travel->decrement('available_passengers');
