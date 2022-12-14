@@ -2,7 +2,7 @@
 An api to create fictional ship travels from one city to another -or even more- and validate them or not according to the [open weather forecast api.](https://open-meteo.com/en)
 Just like the weather, the cities of the travel route are real! and are also requested from open-meteo of the [geocoding api.](https://open-meteo.com/en/docs/geocoding-api#geocoding_form)
 
-You can consume this api with the front-end version of the same project. To go to the front-end version [Click here!](https://github.com/gregodiaz/diadromous-react)
+You can consume this api with the front-end version of the same project. Check out the front-end version! [Click here!](https://github.com/gregodiaz/diadromous-react)
 
 ## Prerequisites
 - Have Docker installed
